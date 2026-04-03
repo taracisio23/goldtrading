@@ -262,9 +262,13 @@ $$\tau^* = \inf \left\{ t \geq t_0 : P(t) \geq P^*_{\text{TP}} \text{ or } P(t) 
 
 **Expected trade duration** (GBM with two-sided exit):
 
-$$\mathbb{E}[\tau^*] = \frac{1}{\mu}\left[\frac{\ln(P^*_{\text{TP}} / P_0) - q \ln(P^*_{\text{SL}} / P_0)}{1 - q}\right]$$
+Let $p_{\text{TP}} = P(P_\tau = P^*_{\text{TP}})$ be the probability of exiting at the take-profit barrier and $p_{\text{SL}} = 1 - p_{\text{TP}}$ be the probability of exiting at the stop-loss barrier. For a GBM with drift $\mu$ and volatility $\sigma$:
 
-where $q = P(P_\tau = P^*_{\text{SL}}) / P(P_\tau = P^*_{\text{TP}})$.
+$$p_{\text{TP}} = \frac{(P_0 / P^*_{\text{SL}})^{2\mu/\sigma^2} - 1}{(P^*_{\text{TP}} / P^*_{\text{SL}})^{2\mu/\sigma^2} - 1}$$
+
+**Expected trade duration**:
+
+$$\mathbb{E}[\tau^*] = \frac{1}{\mu}\left[\frac{p_{\text{TP}} \ln(P^*_{\text{TP}} / P_0) + p_{\text{SL}} \ln(P_0 / P^*_{\text{SL}})}{1}\right]$$
 
 ---
 
@@ -653,7 +657,7 @@ $$\sigma_t^2 = \omega + \sum_{j=1}^{q} \alpha_j r_{t-j}^2$$
 
 **GARCH(1,1) conditional variance equation**:
 
-$$\sigma_t^2 = \omega + \alpha\, \varepsilon_{t-1}^2 + \beta\, \sigma_{t-1}^2$$
+$$\sigma_t^2 = \omega + \alpha\, r_{t-1}^2 + \beta\, \sigma_{t-1}^2$$
 
 with constraints:
 - $\omega > 0$ (baseline variance)
@@ -704,7 +708,7 @@ $$2\kappa\theta > \xi^2$$
 
 $$dF(t) = \hat{\sigma}(t)\, F(t)^\beta\, dW_1(t)$$
 
-$$d\hat{\sigma}(t) = \alpha\, \hat{\sigma}(t)\, dW_2(t)$$
+$$d\hat{\sigma}(t) = \nu\, \hat{\sigma}(t)\, dW_2(t)$$
 
 $$\text{Cov}(dW_1, dW_2) = \rho\,dt$$
 
@@ -712,7 +716,7 @@ $$\text{Cov}(dW_1, dW_2) = \rho\,dt$$
 
 $$\sigma_B(K, F) \approx \frac{\alpha}{(FK)^{(1-\beta)/2}} \cdot \frac{z}{\chi(z)} \left[1 + \left(\frac{(1-\beta)^2}{24}\frac{\alpha^2}{(FK)^{1-\beta}} + \frac{\rho\beta\alpha\nu}{4(FK)^{(1-\beta)/2}} + \frac{2-3\rho^2}{24}\nu^2\right)T\right]$$
 
-where $z = \frac{\nu}{\alpha}(FK)^{(1-\beta)/2}\ln\!\frac{F}{K}$ and $\chi(z) = \ln\!\frac{\sqrt{1 - 2\rho z + z^2} + z - \rho}{1-\rho}$.
+where $z = \frac{\nu}{\alpha}(FK)^{(1-\beta)/2}\ln\!\frac{F}{K}$, $\chi(z) = \ln\!\frac{\sqrt{1 - 2\rho z + z^2} + z - \rho}{1-\rho}$, $\alpha = \hat{\sigma}(0)$ is the initial volatility level, and $\nu$ is the volatility of volatility.
 
 ---
 
@@ -730,7 +734,7 @@ where $z = \frac{\nu}{\alpha}(FK)^{(1-\beta)/2}\ln\!\frac{F}{K}$ and $\chi(z) = 
 | Drawdown | $DD(t) = (V_{\text{peak}} - V(t)) / V_{\text{peak}}$ |
 | MAE (long) | $MAE = \min P(t) - P_{\text{entry}}$ |
 | Risk per Trade | $\text{RiskPerTrade} = f \cdot E$ |
-| GARCH Variance | $\sigma_t^2 = \omega + \alpha\varepsilon_{t-1}^2 + \beta\sigma_{t-1}^2$ |
+| GARCH Variance | $\sigma_t^2 = \omega + \alpha r_{t-1}^2 + \beta\sigma_{t-1}^2$ |
 | Intraday Volatility | $\hat{\sigma}^2 = \frac{(\ln H/L)^2}{4\ln 2}$ |
 | Sharpe Ratio | $SR = \sqrt{nD}\,\mu_1 / \sqrt{\mu_2}$ |
 | Implementation Shortfall | $IS = (P_{\text{fill}} - P_0) + (P_0 - P_{\text{dec}}) + C_{\text{fees}}$ |
